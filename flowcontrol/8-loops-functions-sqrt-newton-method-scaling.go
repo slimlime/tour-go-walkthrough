@@ -52,5 +52,21 @@ func main() {
 	// custom 1.414213562373095
 	// math   1.4142135623730951
 
+
+
+	testArr := [...]float64{1, 2, 3}
+	testeArr := []float64{1, 2, 3}
+	someMapIterable := map[int]float64{1: 1.1}
+	
+	for i := range testArr {
+		fmt.Println(i)
+	}
+	for i := range testeArr {
+		fmt.Println(i)
+	}
+	for k, v := range someMapIterable {
+		fmt.Println(k, v)
+	}
+
 }
 
