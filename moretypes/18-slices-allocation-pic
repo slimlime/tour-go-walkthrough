@@ -1,0 +1,47 @@
+package main
+
+import (
+	// "fmt"
+	"golang.org/x/tour/pic"
+)
+
+func Pic(dx, dy int) [][]uint8 {
+
+	var pixelGrid [][]uint8 = make([][]uint8, dy)
+
+	for yRow := 0; yRow < dy; yRow++ {
+		pixelGrid[yRow] = []uint8{}
+
+		for xCellCol := 0; xCellCol < dx; xCellCol++ {
+			pixel := uint8(yRow * xCellCol / 4)
+
+			pixelGrid[yRow] = append(pixelGrid[yRow], pixel)
+		}
+	}
+
+	return pixelGrid
+}
+
+func main() {
+	// fmt.Println(Pic(5, 5))
+
+	// `godoc -http=:6060` for offline go documentation
+	pic.Show(Pic)
+
+	/* Example from pkg.gov.dev pic documentation.
+		f := func(dx, dy int) [][]uint8 {
+			ss := make([][]uint8, dy)
+			for y := 0; y < dy; y++ {
+				s := make([]uint8, dx)
+				for x := 0; x < dx; x++ {
+					s[x] = uint8((x + y) / 2)
+				}
+				ss[y] = s
+			}
+			return ss
+		}
+
+		pic.Show(f)
+	*/
+}
+
