@@ -1,0 +1,53 @@
+package main
+
+import (
+	"fmt"
+)
+
+// fibonacci is a function that returns
+// a function that returns an int.
+func fibonacci() func() int {
+	position := 0
+
+	return func() int {
+		position += 1
+		return fibo(position)
+	}
+}
+
+func main() {
+	f := fibonacci()
+	for i := 0; i < 10; i++ {
+		fmt.Println(f())
+	}
+}
+
+func fibo(
+	position int,
+) int {
+	if position < 1 {
+		// Check
+	}
+	// Base cases
+	if position == 1 {
+		return 0
+	}
+	if position == 2 {
+		return 1
+	}
+
+	// Is this tail-recursive?
+	// -1 + -2 vs -2 + -1 registers
+
+	// fibo(3) = 0 + 1
+	// fibo(4) = 1 + 1
+	// fibo(5) = 1 + 2
+	// fibo(6) = 2 + 3
+	// 0, 1, 1, 2, 3
+	// fibo(0,1) ==
+	// fibo(1,2) == 3
+	// fibo(2,3) == 5
+
+	return fibo(position-1) + fibo(position-2)
+}
+
