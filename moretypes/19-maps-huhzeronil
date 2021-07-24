@@ -1,0 +1,40 @@
+package main
+
+import "fmt"
+
+type Vertex struct {
+	Lat float64
+	Long float64
+}
+
+var z map[string]Vertex
+
+
+func main() {
+	m := map[string]Vertex{
+		"Bell Labs": Vertex{
+			40.68433, -74.39967,
+		},
+	
+	
+	
+	}
+	fmt.Printf("%T %T %v", m, m["Bell Labs"], m["Bell Labs"])
+	fmt.Println()
+	
+	
+	fmt.Printf("%T %v \n", z, z)
+	
+	// Is currently nil for map zero value. Though prints out as map[] empty. Rather than explicitly saying nil in print.
+	isMapUnassignedNil := z == nil
+	fmt.Printf("Is nil %T %v \n", isMapUnassignedNil, isMapUnassignedNil)
+	
+	z = make(map[string]Vertex)
+	
+	fmt.Printf("%T %v \n", z, z)
+
+	// No longer nil
+	isMapUnassignedNil = z == nil
+	fmt.Printf("Is nil %T %v \n", isMapUnassignedNil, isMapUnassignedNil)
+}
+
