@@ -1,0 +1,41 @@
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+type ErrNegativeSqrt float64
+
+func (err ErrNegativeSqrt) Error() string {
+	const textFormat = "Unable to Sqrt a negative number: %v"
+	
+	return fmt.Sprintf(textFormat, float64(err))
+}
+
+func Sqrt(x float64) (float64, error) {
+	
+	if x < 0 {
+		return 0, ErrNegativeSqrt(x)
+	}
+
+	result := 1.0
+	adjustmentError := 1.0
+	errorThreshold := 0.000000000000001
+	
+	for i := 0; math.Abs(adjustmentError) > errorThreshold; i++ {
+		guessComparison := result * result
+		adjustmentError = guessComparison - x
+		scaledDenominator := 2 * result
+		result -= adjustmentError / scaledDenominator
+
+	}
+
+	return result, nil
+}
+
+func main() {
+	fmt.Println(Sqrt(2))
+	fmt.Println(Sqrt(-2))
+}
+
