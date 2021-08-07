@@ -1,0 +1,73 @@
+package main
+
+import (
+	"fmt"
+	"golang.org/x/tour/reader"
+)
+
+type SomeError struct {
+}
+
+func (err SomeError) Error() string {
+	const textFormat = "Unable to do something"
+
+	return fmt.Sprintf(textFormat)
+}
+
+type MyReader struct{}
+
+// TODO: Add a Read([]byte) (int, error) method to MyReader.
+func (r MyReader) TrollPassTestRead(bytes []byte) (int, error) {
+	// bytes = make([]byte, 1, 'A')
+	// The golang test is not exhaustive -_-
+	// It only tests one byte in a single-element slice...
+
+	copy(bytes, "AAAAAAAAAAAAA")
+	// copy('A', bytes),
+	// bytes[0] = 'A'
+
+	return 1, nil
+}
+
+func (r MyReader) Read(bytes []byte) (numBytes int, error error) {
+	// Any error condition?
+	isSomethingStrangeHappening := false
+
+	// copy(bytes, "A")
+	// `copy` passes the test if we give a single byte and return
+	// a length of 1 element in the slice...
+	// Otherwise the test gives in an array of 1024 elements
+	//
+
+	for i, value := range bytes {
+		bytes[i] = 'A'
+
+		fmt.Println(i, value)
+
+		if isSomethingStrangeHappening {
+			return 0, SomeError{}
+		}
+
+	}
+
+	numBytes = len(bytes)
+
+	return
+}
+
+func main() {
+	reader.Validate(MyReader{})
+
+	testArr := make([]byte, 1)
+	fmt.Println("Before", testArr)
+	MyReader{}.Read(testArr)
+	fmt.Println("After", testArr)
+	fmt.Println()
+	// for i := range testArr {
+	// 	fmt.Sprintf("%v", i)
+	// }
+	// for _, value := range testArr {
+	// 	fmt.Printf("%d\n", value)
+	// }
+}
+
