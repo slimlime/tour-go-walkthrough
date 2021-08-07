@@ -1,0 +1,74 @@
+package main
+
+import (
+	"fmt"
+	"io"
+	"os"
+	"strings"
+)
+
+type rot13Reader struct {
+	r io.Reader
+}
+
+func (rot13 *rot13Reader) Read(bytes []byte) (numBytes int, error error) {
+	numBytes, err := rot13.r.Read(bytes)
+	if err != nil {
+		// Doco mentions not to hardcode a `(0, nil)` return
+		// Due to what that represents.
+		// 0, nil expresses no work done. 0 bytes. no EOF
+		return numBytes, err
+	}
+
+	fmt.Println(numBytes, err, string(bytes), bytes)
+
+	// Implementations must not retain p pointer to bytes array?
+
+	return numBytes, nil
+}
+
+
+
+// Simple rotation cipher per alphabet character
+// Does not currently include special characters or other charset
+// @param asciiCode the character code according to ASCII set
+// @param the number of alphabet placements to rotate i.e. rot13 13 positions. Used for modulo
+func rot(asciiCode byte, numRot int) byte {
+	// Explicitly listing const usages for easy refactor later.
+	const uppercaseAlphabetStart = 'A'
+	const uppercaseAlphabetEnd = 'Z'
+	const lowercaseAlphabetStart = 'a'
+	const lowercaseAlphabetEnd = 'z'
+	const caseInsensitiveAlphabetCount = 26
+
+	// Shortened aliases
+	const upStart = uppercaseAlphabetStart
+	const upEnd = uppercaseAlphabetEnd
+	const lowStart = lowercaseAlphabetStart
+	const lowEnd = lowercaseAlphabetEnd
+	const alphabetCount = 26
+
+	// Note closed-closed inclusive range.
+	switch {
+	case asciiCode >= upStart && asciiCode <= upEnd:
+		return byte(upStart + ((int(asciiCode) - upStart + numRot) % alphabetCount))
+	case asciiCode >= lowStart && asciiCode <= lowEnd:
+		return byte(lowStart + ((int(asciiCode) - lowStart + numRot) % alphabetCount))
+
+	default:
+		// Do nothing
+		return asciiCode
+	}
+}
+
+func main() {
+	// "You cracked the code!"
+	// 65 A start of alphabet capitals
+	// Also wrap the 26 lowercase?
+
+	s := strings.NewReader("Lbh penpxrq gur pbqr!")
+	r := rot13Reader{s}
+	fmt.Println(r)
+	io.Copy(os.Stdout, &r)
+}
+
