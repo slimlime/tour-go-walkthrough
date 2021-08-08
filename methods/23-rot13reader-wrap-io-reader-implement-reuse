@@ -11,8 +11,8 @@ type rot13Reader struct {
 	r io.Reader
 }
 
-func (rot13 *rot13Reader) Read(bytes []byte) (numBytes int, error error) {
-	numBytes, err := rot13.r.Read(bytes)
+func (rot13r *rot13Reader) Read(bytes []byte) (numBytes int, error error) {
+	numBytes, err := rot13r.r.Read(bytes)
 	if err != nil {
 		// Doco mentions not to hardcode a `(0, nil)` return
 		// Due to what that represents.
@@ -23,7 +23,7 @@ func (rot13 *rot13Reader) Read(bytes []byte) (numBytes int, error error) {
 	fmt.Println(numBytes, err, string(bytes), bytes)
 
 	for i, val := range bytes {
-		bytes[i] = rot(val, 13)
+		bytes[i] = rot13(val)
 	}
 	// Implementations must not retain p pointer to bytes array?
 
@@ -60,6 +60,13 @@ func rot(asciiCode byte, numRot int) byte {
 		// Do nothing
 		return asciiCode
 	}
+}
+
+// Helper fn rot13 letter substitution cipher
+func rot13(asciiCode byte) byte {
+	const letterPositionRotations = 13
+
+	return rot(asciiCode, letterPositionRotations)
 }
 
 func main() {
