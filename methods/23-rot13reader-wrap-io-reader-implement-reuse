@@ -22,12 +22,13 @@ func (rot13 *rot13Reader) Read(bytes []byte) (numBytes int, error error) {
 
 	fmt.Println(numBytes, err, string(bytes), bytes)
 
+	for i, val := range bytes {
+		bytes[i] = rot(val, 13)
+	}
 	// Implementations must not retain p pointer to bytes array?
 
 	return numBytes, nil
 }
-
-
 
 // Simple rotation cipher per alphabet character
 // Does not currently include special characters or other charset
@@ -68,7 +69,6 @@ func main() {
 
 	s := strings.NewReader("Lbh penpxrq gur pbqr!")
 	r := rot13Reader{s}
-	fmt.Println(r)
 	io.Copy(os.Stdout, &r)
 }
 
