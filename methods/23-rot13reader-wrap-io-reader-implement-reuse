@@ -34,6 +34,7 @@ func (rot13r *rot13Reader) Read(bytes []byte) (numBytes int, error error) {
 // Does not currently include special characters or other charset
 // @param asciiCode the character code according to ASCII set
 // @param the number of alphabet placements to rotate i.e. rot13 13 positions. Used for modulo
+// Rot = rot = rotations, per cipher convention rot13 abbreviation
 func rot(asciiCode byte, numRot int) byte {
 	// Explicitly listing const usages for easy refactor later.
 	const uppercaseAlphabetStart = 'A'
@@ -50,16 +51,41 @@ func rot(asciiCode byte, numRot int) byte {
 	const alphabetCount = 26
 
 	// Note closed-closed inclusive range.
+	// For clarity of the a to z ranges
 	switch {
 	case asciiCode >= upStart && asciiCode <= upEnd:
-		return byte(upStart + ((int(asciiCode) - upStart + numRot) % alphabetCount))
+		return transposeLetterByte(asciiCode, upStart, numRot)
+
 	case asciiCode >= lowStart && asciiCode <= lowEnd:
-		return byte(lowStart + ((int(asciiCode) - lowStart + numRot) % alphabetCount))
+		return transposeLetterByte(asciiCode, lowStart, numRot)
 
 	default:
 		// Do nothing
 		return asciiCode
 	}
+
+}
+
+// Wrapper coercion byte int casting helper utility fn
+// Golang does not have function overloading
+// Helper to help caller usage with bytes reader.
+func transposeLetterByte(asciiCode byte, startCode int, numRot int) byte {
+	return byte(transposeLetter(int(asciiCode), startCode, numRot))
+}
+// Transpose letter according to alphabet ascii set
+//
+func transposeLetter(asciiCode int, startCode int, numRot int) int {
+
+	// Alphabet is a constant.
+	// ASCII subset is likewise strongly-dependent on
+	// English alphabet is unlikely to suddenly evolve additional letters in society.
+	const alphabetCount = 26
+
+	// Alphabet count modulo serves to wrap around to fulfil the
+	// full circular 'rotation' convention of the transposition
+
+	// See example: `byte(upStart + ((int(asciiCode) - upStart + numRot) % alphabetCount))`
+	return startCode + ((asciiCode - startCode + numRot) % alphabetCount)
 }
 
 // Helper fn rot13 letter substitution cipher
